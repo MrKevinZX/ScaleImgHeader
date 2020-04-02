@@ -13,6 +13,7 @@ CoordinatorLayout实现拉伸header动画
 2. xml 中使用以下api 在预览图可以达到效果， 但是在真机运行过程中不可以
   
   app:layout_anchorGravity="bottom"
+  
   app:layout_anchor="@id/img_bg"
   
   解决方案： 在behavior onlayoutchild 中自己去定义位置
