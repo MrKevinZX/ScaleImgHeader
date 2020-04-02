@@ -14,6 +14,9 @@ import androidx.core.view.ViewCompat;
 
 import com.google.android.material.appbar.AppBarLayout;
 
+/**
+ * 场景一拉伸
+ */
 public class ScaleBehavior extends AppBarLayout.Behavior {
     private ImageView mImageView;
     private int mAppbarHeight;//记录AppbarLayout原始高度
@@ -58,20 +61,16 @@ public class ScaleBehavior extends AppBarLayout.Behavior {
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, @NonNull AppBarLayout child, View target, int dx, int dy, int[] consumed, int type) {
         int currentHeight = child.getBottom();
-        Log.i("wdd", " mcurrentHeight = " + currentHeight + "dy === " + dy);
         if (child.getBottom() >= mAppbarHeight && dy < 0 && type == ViewCompat.TYPE_TOUCH) {
-            Log.i("wdd", "11111");
             zoomHeaderImageView(child, dy);
         } else {
             if (child.getBottom() > mAppbarHeight && dy > 0 && type == ViewCompat.TYPE_TOUCH) {
                 consumed[1] = dy;
                 zoomHeaderImageView(child, dy);
-                Log.i("wdd", "22222");
             } else {
                 if (valueAnimator == null || !valueAnimator.isRunning()) {
                     super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
                 }
-                Log.i("wdd", "33333");
 
             }
         }

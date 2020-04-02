@@ -13,13 +13,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.AppBarLayout;
-
-public class RecyclerBehavior extends CoordinatorLayout.Behavior {
-    private static final String TAG = "WDD";
+/**
+ * header滑动拉伸
+ */
+public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
+    private static final String TAG = "RecyclerBehavior";
     private int pushPosition; //上推终点的位置
     private int pullPosition;//下拉的最大位置
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private ImageView mImageView;
     private ValueAnimator valueAnimator;
     private RelativeLayout mImgContainer;
@@ -30,15 +31,15 @@ public class RecyclerBehavior extends CoordinatorLayout.Behavior {
     private boolean isAnimate;//是否做动画标志
     private int mLastBottom;//Appbar的变化高度
     private int mAppbarHeight;//记录AppbarLayout原始高度
-    public RecyclerBehavior(int pushPosition, int pullPosition) {
+    public CustomScrollBehavior(int pushPosition, int pullPosition) {
         this.pushPosition = pushPosition;
         this.pullPosition = pullPosition;
     }
 
-    public RecyclerBehavior() {
+    public CustomScrollBehavior() {
     }
 
-    public RecyclerBehavior(Context context, AttributeSet attrs) {
+    public CustomScrollBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -57,7 +58,6 @@ public class RecyclerBehavior extends CoordinatorLayout.Behavior {
         mAppbarHeight = mImgContainer.getHeight();
         mImageViewHeight = mImageView.getHeight();
         recyclerView.setY(pullPosition);
-//        ViewCompat.offsetTopAndBottom(recyclerView, pullPosition);
     }
     /**
      * recycle 滑动到顶部
@@ -131,11 +131,15 @@ public class RecyclerBehavior extends CoordinatorLayout.Behavior {
         mTotalDy += -dy;
         mTotalDy = Math.min(mTotalDy, MAX_ZOOM_HEIGHT);
         mScaleValue = Math.max(1f, 1f + mTotalDy / MAX_ZOOM_HEIGHT);
-        ViewCompat.setScaleX(mImageView, mScaleValue);
-        ViewCompat.setScaleY(mImageView, mScaleValue);
+        if (mImageView != null) {
+            mImageView.setScaleX(mScaleValue);
+            mImageView.setScaleY(mScaleValue);
+        }
+
         mLastBottom = mAppbarHeight + (int) (mImageViewHeight / 2 * (mScaleValue - 1));
-        Log.i(TAG, "mLastBottom = " + mLastBottom);
-        mImgContainer.setBottom(mLastBottom);
+        if (mImgContainer != null) {
+            mImgContainer.setBottom(mLastBottom);
+        }
         child.setY(mLastBottom);
     }
 
@@ -156,7 +160,9 @@ public class RecyclerBehavior extends CoordinatorLayout.Behavior {
                         ViewCompat.setScaleX(mImageView, value);
                         ViewCompat.setScaleY(mImageView, value);
                         float position = mLastBottom - (mLastBottom - mAppbarHeight) * animation.getAnimatedFraction();
-                        mImgContainer.setBottom((int) position);
+                        if (mImgContainer != null) {
+                            mImgContainer.setBottom((int) position);
+                        }
                         child.setY(position);
                     }
                 });
@@ -164,7 +170,9 @@ public class RecyclerBehavior extends CoordinatorLayout.Behavior {
             } else {
                 ViewCompat.setScaleX(mImageView, 1f);
                 ViewCompat.setScaleY(mImageView, 1f);
-                mImgContainer.setBottom(mAppbarHeight);
+                if (mImgContainer != null) {
+                    mImgContainer.setBottom(mAppbarHeight);
+                }
                 child.setY(pullPosition);
             }
         }
