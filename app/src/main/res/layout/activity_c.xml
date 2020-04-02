@@ -32,17 +32,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <LinearLayout
+    <include
         android:id="@+id/header_container"
         android:layout_width="match_parent"
-        android:background="#ffcc00"
         app:layout_behavior=".NavgationBarBehavior"
         android:alpha="0"
-        android:layout_height="30dp">
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="顶部标题"/>
-    </LinearLayout>
+        layout="@layout/layout_header"
+        android:orientation="horizontal"
+        android:layout_height="30dp"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

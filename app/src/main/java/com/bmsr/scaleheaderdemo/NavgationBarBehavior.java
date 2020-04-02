@@ -1,8 +1,10 @@
 package com.bmsr.scaleheaderdemo;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -12,11 +14,19 @@ public class NavgationBarBehavior extends CoordinatorLayout.Behavior<View> {
     private float mLastPostition = -1f;
     private static final int ALPHA_THRESHOLD = 100;//透明度变化阈值
     private int startAlphaPosition = 0; // 开始变化的位置
+    private ImageView mBackIcon;
     public NavgationBarBehavior() {
     }
 
     public NavgationBarBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    @Override
+    public boolean onLayoutChild(@NonNull CoordinatorLayout parent, @NonNull View child, int layoutDirection) {
+        boolean res =  super.onLayoutChild(parent, child, layoutDirection);
+        mBackIcon = child.findViewById(R.id.iv_back);
+        return res;
     }
 
     @Override
@@ -39,6 +49,8 @@ public class NavgationBarBehavior extends CoordinatorLayout.Behavior<View> {
         if (currentY > startAlphaPosition) {
             //不做任何事情
             child.setAlpha(0);
+            //todo 跳转颜色
+//            mBackIcon.setColorFilter(1, PorterDuff.Mode.SRC_IN);
         }
 
         if (currentY < startAlphaPosition) {
