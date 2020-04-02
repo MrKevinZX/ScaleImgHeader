@@ -70,6 +70,7 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+        isAnimate = true;
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL;
     }
 
@@ -152,13 +153,13 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
         if (mTotalDy > 0) {
             mTotalDy = 0;
             if (isAnimate) {
-                valueAnimator = ValueAnimator.ofFloat(mScaleValue, 1f).setDuration(220);
+                valueAnimator = ValueAnimator.ofFloat(mScaleValue, 1f).setDuration(600);
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         float value = (float) animation.getAnimatedValue();
-                        ViewCompat.setScaleX(mImageView, value);
-                        ViewCompat.setScaleY(mImageView, value);
+                        mImageView.setScaleX(value);
+                        mImageView.setScaleY(value);
                         float position = mLastBottom - (mLastBottom - mAppbarHeight) * animation.getAnimatedFraction();
                         if (mImgContainer != null) {
                             mImgContainer.setBottom((int) position);
@@ -168,8 +169,8 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
                 });
                 valueAnimator.start();
             } else {
-                ViewCompat.setScaleX(mImageView, 1f);
-                ViewCompat.setScaleY(mImageView, 1f);
+                mImageView.setScaleX(1f);
+                mImageView.setScaleY(1f);
                 if (mImgContainer != null) {
                     mImgContainer.setBottom(mAppbarHeight);
                 }

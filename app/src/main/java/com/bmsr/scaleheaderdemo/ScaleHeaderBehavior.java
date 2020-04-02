@@ -107,7 +107,7 @@ public class ScaleHeaderBehavior extends CoordinatorLayout.Behavior<View> {
         if (mTotalDy > 0) {
             mTotalDy = 0;
             if (isAnimate) {
-                valueAnimator = ValueAnimator.ofFloat(mScaleValue, 1f).setDuration(220);
+                valueAnimator = ValueAnimator.ofFloat(mScaleValue, 1f).setDuration(300);
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
