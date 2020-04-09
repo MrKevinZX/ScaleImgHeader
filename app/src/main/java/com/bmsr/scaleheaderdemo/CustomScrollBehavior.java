@@ -5,13 +5,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bmsr.scaleheaderdemo.banner.view.BannerViewPager;
 
 /**
  * header滑动拉伸
@@ -21,9 +22,9 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
     private int pushPosition; //上推终点的位置
     private int pullPosition;//下拉的最大位置
     private RecyclerView recyclerView;
-    private ImageView mImageView;
+    private ViewGroup banner;
     private ValueAnimator valueAnimator;
-    private RelativeLayout mImgContainer;
+    private ViewGroup viewpager;
     private static final float MAX_ZOOM_HEIGHT = 1000;//放大最大高度
     private float mTotalDy;//手指在Y轴滑动的总距离
     private float mScaleValue;//图片缩放比例
@@ -53,10 +54,9 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
 
     private void initView(View child) {
         recyclerView = child.findViewById(R.id.recycler_view);
-        mImageView = child.findViewById(R.id.img_bg);
-        mImgContainer = child.findViewById(R.id.banner_container);
-        mAppbarHeight = mImgContainer.getHeight();
-        mImageViewHeight = mImageView.getHeight();
+        banner = child.findViewById(R.id.banner);
+        viewpager = child.findViewById(R.id.bannerViewPager);
+        mImageViewHeight = banner.getHeight();
         recyclerView.setY(pullPosition);
     }
     /**
@@ -85,28 +85,34 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
                 consumed[1] = dy;
             } else if (childY > pushPosition) {
                 int delta = Math.max(childY - dy, pushPosition);
-                child.setY(delta);
-                consumed[1] = childY - delta;
+//                child.setY(delta);
+                int diff = childY-delta;
+                Log.i(TAG, "onNestedPreScroll: -->" + diff);
+                ViewCompat.offsetTopAndBottom(child, childY-delta);
+                consumed[1] = diff;
             }
 
         }
         if (dy < 0) {
-            if (!isBottomScrollTop()) {
-                //滑动到第一个item可见
-            } else {
-                if (childY < pullPosition) {
-                    //滑动到最大位置
-                    int delta = Math.min(pullPosition, childY - dy);
-                    child.setY(delta);
-                    consumed[1] = childY-delta;
-                }
+            Log.i(TAG, "onNestedPreScroll:wdd  dy = " + dy + ", childy =" + child.getY() +   ", mImgContainer height = " + (viewpager.getBottom() - dy));
+            //img 拉伸
+            BannerViewPager.isScrolling = true;
+            child.offsetTopAndBottom(-dy);
+            banner.layout(banner.getLeft(), banner.getTop(), banner.getRight(), banner.getBottom() - dy);
+//            viewpager.layout(viewpager.getLeft(), viewpager.getTop(), viewpager.getRight(), viewpager.getBottom() - dy);
 
-            }
-            Log.i(TAG, "onNestedPreScroll: pull = " + pullPosition + ", childy =" + child.getY());
-            if (type == ViewCompat.TYPE_TOUCH && childY >= pullPosition) {
-                //img 拉伸
-                zoomHeaderImageView(child, dy);
-            }
+//            mBannerView.requestLayout();
+//            child.setY(childY - dy);
+//            int height1 = child.getHeight();
+//            ViewGroup.LayoutParams params1 = child.getLayoutParams();
+//            params1.height = height1 - 1;
+//            child.setLayoutParams(params1);
+//            int height = banner.getHeight();
+//            ViewGroup.LayoutParams params = banner.getLayoutParams();
+//            params.height = height + 1;
+//            banner.setLayoutParams(params);
+
+//            consumed[1] = -dy;
         }
     }
 
@@ -123,7 +129,8 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, @NonNull View child, View target, int type) {
-        recovery(child);
+//        recovery(child);
+        BannerViewPager.isScrolling = false;
         super.onStopNestedScroll(coordinatorLayout, child, target, type);
     }
 
@@ -132,16 +139,17 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
         mTotalDy += -dy;
         mTotalDy = Math.min(mTotalDy, MAX_ZOOM_HEIGHT);
         mScaleValue = Math.max(1f, 1f + mTotalDy / MAX_ZOOM_HEIGHT);
-        if (mImageView != null) {
-            mImageView.setScaleX(mScaleValue);
-            mImageView.setScaleY(mScaleValue);
+        ViewGroup.LayoutParams params1 = child.getLayoutParams();
+//        params1.height
+        mLastBottom = mAppbarHeight + (int) (mImageViewHeight / 2 * (mScaleValue - 1));
+        int height = banner.getHeight();
+//        ViewGroup.LayoutParams params = mBannerView.getLayoutParams();
+//        params.height = height + 10;
+//        mBannerView.setLayoutParams(params);
+        if (viewpager != null) {
+//            mImgContainer.setBottom(mLastBottom);
         }
 
-        mLastBottom = mAppbarHeight + (int) (mImageViewHeight / 2 * (mScaleValue - 1));
-        if (mImgContainer != null) {
-            mImgContainer.setBottom(mLastBottom);
-        }
-        child.setY(mLastBottom);
     }
 
     /**
@@ -158,21 +166,21 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         float value = (float) animation.getAnimatedValue();
-                        mImageView.setScaleX(value);
-                        mImageView.setScaleY(value);
+                        banner.setScaleX(value);
+                        banner.setScaleY(value);
                         float position = mLastBottom - (mLastBottom - mAppbarHeight) * animation.getAnimatedFraction();
-                        if (mImgContainer != null) {
-                            mImgContainer.setBottom((int) position);
+                        if (viewpager != null) {
+                            viewpager.setBottom((int) position);
                         }
                         child.setY(position);
                     }
                 });
                 valueAnimator.start();
             } else {
-                mImageView.setScaleX(1f);
-                mImageView.setScaleY(1f);
-                if (mImgContainer != null) {
-                    mImgContainer.setBottom(mAppbarHeight);
+                banner.setScaleX(1f);
+                banner.setScaleY(1f);
+                if (viewpager != null) {
+                    viewpager.setBottom(mAppbarHeight);
                 }
                 child.setY(pullPosition);
             }

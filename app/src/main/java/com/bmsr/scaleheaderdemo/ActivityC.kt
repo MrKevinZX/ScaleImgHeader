@@ -20,4 +20,6 @@ class ActivityC :AppCompatActivity() {
         recycler_view.layoutManager = LinearLayoutManager(this);
 
     }
+
+
 }
