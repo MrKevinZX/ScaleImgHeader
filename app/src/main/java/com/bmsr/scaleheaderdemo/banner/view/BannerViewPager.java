@@ -51,15 +51,4 @@ public class BannerViewPager extends ViewPager {
         this.scrollable = scrollable;
     }
 
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        Banner.BannerPagerAdapter adapter = (Banner.BannerPagerAdapter) getAdapter();
-        View view = adapter.getCurrentView();
-        if (isScrolling) {
-            view.layout(l, t, r, b);
-            Log.i("wdd", "onLayout: ---->1111111");
-        }
-    }
 }

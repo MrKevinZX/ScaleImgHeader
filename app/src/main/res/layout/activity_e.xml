@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.bmsr.scaleheaderdemo.CustomViewPager
+        android:id="@+id/viewpager"
+        android:background="#11cc00"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/user_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/header_container"
+                android:text="头部信息"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:background="#ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_below="@id/header_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/nav_container"
+            app:layout_behavior=".NavgationBarBehavior"
+            android:alpha="0"
+            layout="@layout/layout_header"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

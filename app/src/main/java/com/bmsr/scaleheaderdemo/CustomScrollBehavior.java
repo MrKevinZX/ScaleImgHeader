@@ -2,10 +2,12 @@ package com.bmsr.scaleheaderdemo;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -23,6 +25,7 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
     private int pullPosition;//下拉的最大位置
     private RecyclerView recyclerView;
     private ViewGroup banner;
+    private ImageView mBannerStub;
     private ValueAnimator valueAnimator;
     private ViewGroup viewpager;
     private static final float MAX_ZOOM_HEIGHT = 1000;//放大最大高度
@@ -52,12 +55,16 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
         return res;
     }
 
-    private void initView(View child) {
-        recyclerView = child.findViewById(R.id.recycler_view);
-        banner = child.findViewById(R.id.banner);
-        viewpager = child.findViewById(R.id.bannerViewPager);
+    private void initView(View container) {
+        recyclerView = container.findViewById(R.id.recycler_view);
+        banner = container.findViewById(R.id.banner);
+        mBannerStub = container.findViewById(R.id.banner_stub);
+        viewpager = container.findViewById(R.id.bannerViewPager);
         mImageViewHeight = banner.getHeight();
         recyclerView.setY(pullPosition);
+        ViewGroup.LayoutParams params = mBannerStub.getLayoutParams();
+        params.height = mImageViewHeight;
+        mBannerStub.setLayoutParams(params);
     }
     /**
      * recycle 滑动到顶部
@@ -94,11 +101,16 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
 
         }
         if (dy < 0) {
-            Log.i(TAG, "onNestedPreScroll:wdd  dy = " + dy + ", childy =" + child.getY() +   ", mImgContainer height = " + (viewpager.getBottom() - dy));
             //img 拉伸
-            BannerViewPager.isScrolling = true;
+//            BannerViewPager.isScrolling = true;
+
+            if (mBannerStub.getVisibility() == View.GONE) {
+                showStub();
+            }
+            mBannerStub.layout(mBannerStub.getLeft(), mBannerStub.getTop(), mBannerStub.getRight(), mBannerStub.getBottom() - dy);
             child.offsetTopAndBottom(-dy);
-            banner.layout(banner.getLeft(), banner.getTop(), banner.getRight(), banner.getBottom() - dy);
+            consumed[1] = -dy;
+//            banner.layout(banner.getLeft(), banner.getTop(), banner.getRight(), banner.getBottom() - dy);
 //            viewpager.layout(viewpager.getLeft(), viewpager.getTop(), viewpager.getRight(), viewpager.getBottom() - dy);
 
 //            mBannerView.requestLayout();
@@ -112,10 +124,19 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
 //            params.height = height + 1;
 //            banner.setLayoutParams(params);
 
-//            consumed[1] = -dy;
+
         }
     }
 
+    private void showStub() {
+        viewpager.setDrawingCacheEnabled(true);
+        viewpager.buildDrawingCache();
+        Bitmap bitmap = viewpager.getDrawingCache();
+        mBannerStub.setImageBitmap(bitmap);
+        mBannerStub.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        mBannerStub.setVisibility(View.VISIBLE);
+        banner.setVisibility(View.GONE);
+    }
 
 
     @Override
@@ -130,7 +151,11 @@ public class CustomScrollBehavior extends CoordinatorLayout.Behavior {
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, @NonNull View child, View target, int type) {
 //        recovery(child);
-        BannerViewPager.isScrolling = false;
+//        BannerViewPager.isScrolling = false;
+        mBannerStub.setVisibility(View.GONE);
+        banner.setVisibility(View.VISIBLE);
+        mBannerStub.setImageBitmap(null);
+        recyclerView.setY(mImageViewHeight);
         super.onStopNestedScroll(coordinatorLayout, child, target, type);
     }
 

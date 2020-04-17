@@ -652,7 +652,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        selfLayout(this,  l, t, r, b);
+//        selfLayout(this,  l, t, r, b);
     }
 
     private void selfLayout(View view, int l, int t, int r, int b) {

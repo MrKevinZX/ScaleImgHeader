@@ -2,13 +2,16 @@ package com.bmsr.scaleheaderdemo
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_c.*
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewpager.adapter = TestImageAdapter(imgList = imgLists);
         viewpager.layoutParams.height = getScreenWidth(this)[0]
-
+        getOAID()
     }
 
     fun getScreenWidth(context: Context?): List<Int> {
@@ -57,5 +60,28 @@ class MainActivity : AppCompatActivity() {
         val width = wm.defaultDisplay.width
         val height = wm.defaultDisplay.height
         return listOf(width, height)
+    }
+
+
+    /**
+     * android 10 获取device oaid 信息
+     * @return
+     */
+    fun getOAID(): String? {
+        val oiad: String = ""
+        if (!TextUtils.isEmpty(oiad)) {
+            return oiad
+        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            return ""
+        }
+        val miitHelper = MiitHelper(object : AppIdsUpdater {
+
+            override fun OnIdsAvalid(ids: String) {
+                Log.i("wdd", "ids = " + ids)
+            }
+        })
+        miitHelper.getDeviceIds(application)
+        return oiad
     }
 }
