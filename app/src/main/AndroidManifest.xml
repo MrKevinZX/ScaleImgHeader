@@ -23,11 +23,7 @@
 
         </activity>
         <activity android:name=".ActivityE">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".launchmodel.ActivityA"
             android:launchMode="singleTask">
@@ -38,6 +34,13 @@
             />
         <activity android:name=".launchmodel.ActivityC" />
         <activity android:name=".launchmodel.ActivityD" />
+        <activity android:name=".ActivityH" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

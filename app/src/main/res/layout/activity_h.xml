@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.bmsr.scaleheaderdemo.CustomView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
+
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <TextView
+            android:id="@+id/nav"
+            android:text="导航栏"
+            app:layout_behavior="com.bmsr.scaleheaderdemo.NavBehavior"
+            android:layout_marginTop="320dp"
+            android:background="#11cc00"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_marginTop="380dp"
+            android:text="文案1"
+            android:textColor="#ffffff"
+            android:background="#1f1a20"
+            android:gravity="center"
+            app:layout_behavior="com.bmsr.scaleheaderdemo.HeaderBehavior"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>
+
